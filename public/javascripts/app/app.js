@@ -13,7 +13,7 @@ var socket;
 
 function initialize(){
   $(document).foundation();
-  initializeSocketIO();
+  // initializeSocketIO();
 
   $('#startGame').on('click', startNewGame);
 
@@ -176,17 +176,17 @@ function forfeitSilver(){
 
 //----------------Sockets-------------------------------//
 
-function initializeSocketIO(){
-  var port = location.port ? location.port : '80';
-  var url = location.protocol + '//' + location.hostname + ':' + port + '/app';
+// function initializeSocketIO(){
+//   var port = location.port ? location.port : '80';
+//   var url = location.protocol + '//' + location.hostname + ':' + port + '/app';
 
-  socket = io.connect(url);
-  socket.on('connected', socketConnected);
-}
+//   socket = io.connect(url);
+//   socket.on('connected', socketConnected);
+// }
 
-function socketConnected(data){
-  console.log(data);
-}
+// function socketConnected(data){
+//   console.log(data);
+// }
 
 
 
