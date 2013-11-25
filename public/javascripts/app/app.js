@@ -78,9 +78,9 @@ function initGoldDrop(){
     $('#square'+abc[gol]+'1').addClass('initGoldDrop');
     $('#square'+abc[gol]+'2').addClass('initGoldDrop');
   }
-  var Rd = REDIPS.drag;
-  Rd.drag.only.div.initGold = 'initGoldDrop';
-  Rd.drag.only.other = 'deny';
+  // var Rd = REDIPS.drag;
+  // Rd.drag.only.div.initGold = 'initGoldDrop';
+  // Rd.drag.only.other = 'deny';
 }
 
 
