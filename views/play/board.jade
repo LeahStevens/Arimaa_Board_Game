@@ -1,0 +1,31 @@
+-var numbers = [8,7,6,5,4,3,2,1]
+-var X = [8,7,6,5,4,3,2,1]
+-var letters = ['A','B','C','D','E','F','G','H']
+.row
+  .small-12.columns
+    div(id= 'drag')
+      .row
+        .small-12.columns
+          button#endSetUpSilver.hidden.small.round.expand End Silver Set Up
+      .row
+        .small-6.columns
+          button#endTurnSilver.hidden.small.round.expand End Silver Turn
+        .small-6.columns
+          button#forfeitSilver.hidden.small.round.expand Forfeit
+      .row
+        .small-12.columns
+          table
+            tbody
+              each y in numbers
+                tr
+                  each x in letters
+                    td.square.single(id="square"+x+y, data-x=x, data-y=y)= x + y
+      .row
+        .small-12.columns
+          button#endSetUpGold.small.round.expand End Gold Set Up
+      .row
+        .small-6.columns
+          button#endTurnGold.hidden.small.round.expand End Gold Turn
+        .small-6.columns
+          button#forfeitGold.hidden.small.round.expand Forfeit
+
