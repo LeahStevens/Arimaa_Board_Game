@@ -1,26 +1,17 @@
 $(document).ready(initialize);
 
-
-
 //----Global Variables-----------//
-var Animal = ['Bunny', 'Cat', 'Dog', 'Horse', 'Camel', 'Elephant'];
-var createAnimal1 = ['Bunny','Bunny','Bunny','Bunny','Bunny','Bunny','Bunny','Bunny'];
-var createAnimal2 = ['Cat','Cat','Dog', 'Dog','Horse', 'Horse', 'Camel', 'Elephant'];
 var abc = ['A','B','C','D','E','F','G','H'];
-var socket;
-
-
+// var socket;
 
 function initialize(){
   $(document).foundation();
   // initializeSocketIO();
-
   $('#startGame').on('click', startNewGame);
 
   setUpBlackSquares();
   setUpGamePieces();
 
-  // $('div').on('click','.gold', setUpGamePiecesGold);
   $('#endSetUpGold').on('click', setUpGamePiecesSilver);
   $('#endSetUpSilver').on('click', endSetUp);
   $('#endTurnGold').on('click', clickSilverTurn);
@@ -30,14 +21,11 @@ function initialize(){
   $('#forfeitGold').on('click', forfeitGold);
 }
 
-
-
 //-----------------------Starting Functions--------------------//
 
 function startNewGame(){
   window.location = '/game';
 }
-
 
 
 //------------------------Set up Game---------------------------//
@@ -51,6 +39,12 @@ function setUpBlackSquares(){
 }
 
 function setUpGamePieces(){
+
+  //---First Row of Bunnies
+  var createAnimal1 = ['Bunny','Bunny','Bunny','Bunny','Bunny','Bunny','Bunny','Bunny'];
+  //---All the Other Animals
+  var createAnimal2 = ['Cat','Cat','Dog', 'Dog','Horse', 'Horse', 'Camel', 'Elephant'];
+
   //----------------Set up Gold Animals
   for(var g = 0; g < 8; g++){
     var $goldAnimal1 = $('<div> id="initGold"').addClass('drag').css('z-index', 2).addClass('gold').addClass('gold'+createAnimal1[g]);
@@ -78,19 +72,10 @@ function initGoldDrop(){
     $('#square'+abc[gol]+'1').addClass('initGoldDrop');
     $('#square'+abc[gol]+'2').addClass('initGoldDrop');
   }
-  // var Rd = REDIPS.drag;
-  // Rd.drag.only.div.initGold = 'initGoldDrop';
-  // Rd.drag.only.other = 'deny';
 }
 
 
-
 //-------------------Player Set Up Of Game Pieces------------------//
-
-// function setUpGamePiecesGold(e){
-//   console.log(this);
-//   e.stopPropagation();
-// }
 
 function setUpGamePiecesSilver(e){
   $('#endSetUpGold').toggleClass('hidden');
@@ -98,7 +83,6 @@ function setUpGamePiecesSilver(e){
   console.log(this);
   e.stopPropagation();
 }
-
 
 
 //-------------Moving Pieces + Taking Turns---------------//
@@ -109,7 +93,7 @@ function endSetUp(){
 }
 
 function clickGoldTurn(){
-  toggleClassesForClickGoldTurn();
+  toggleClassesForClickTurns();
   console.log('Gold Turn');
   //This needs to be called after every move
   checkForTarPit();
@@ -117,7 +101,7 @@ function clickGoldTurn(){
 }
 
 function clickSilverTurn(){
-  toggleClassesForClickSilverTurn();
+  toggleClassesForClickTurns();
   console.log('Silver Turn');
   //This needs to be called after every move
   checkForTarPit();
@@ -125,22 +109,7 @@ function clickSilverTurn(){
 }
 
 
-
 //----------------Toggling Classes--------------------//
-
-function toggleClassesForClickSilverTurn(){
-  $('#endTurnGold').toggleClass('hidden');
-  $('#endTurnSilver').toggleClass('hidden');
-  $('#forfeitGold').toggleClass('hidden');
-  $('#forfeitSilver').toggleClass('hidden');
-}
-
-function toggleClassesForClickGoldTurn(){
-  $('#endTurnSilver').toggleClass('hidden');
-  $('#endTurnGold').toggleClass('hidden');
-  $('#forfeitGold').toggleClass('hidden');
-  $('#forfeitSilver').toggleClass('hidden');
-}
 
 function toggleClassesForEndSetUp(){
   $('#endSetUpSilver').toggleClass('hidden');
@@ -148,33 +117,59 @@ function toggleClassesForEndSetUp(){
   $('#forfeitSilver').toggleClass('hidden');
 }
 
+function toggleClassesForClickTurns(){
+  $('#endTurnSilver').toggleClass('hidden');
+  $('#endTurnGold').toggleClass('hidden');
+  $('#forfeitGold').toggleClass('hidden');
+  $('#forfeitSilver').toggleClass('hidden');
+}
 
 
 //---------------Win Functions--------------------------//
 
 function checkForWin(){
+
+  //--------------------------------Check for Gold Win
   for(var g = 0; g < 8; g++){
+  //---Loops through row A-H8 searching for Gold Bunnies
     if($('#square'+abc[g]+'8 > div').hasClass('goldBunny') === true){
       alert('Gold Won');
-
+      startNewGame();
     }
   }
+  if($('div').hasClass('goldBunny') === false){
+    alert('Silver Won');
+    startNewGame();
+  }
+
+  //---------------------------------Check for Silver Win
   for(var s = 0; s < 8; s++){
+    //---Loops through row A-H1 searching for Silver Bunnies
     if($('#square'+abc[s]+'1 > div').hasClass('silverBunny') === true){
       alert('Silver Won');
+      startNewGame();
     }
   }
+  if($('div').hasClass('silverBunny') === false){
+    alert('Gold Won');
+    startNewGame();
+  }
 }
+
+//-------------------------------Forfeit Functions
+//---These are on click
+
 function forfeitGold(){
   alert('Silver Won');
+  startNewGame();
 }
 function forfeitSilver(){
   alert('Gold Won');
+  startNewGame();
 }
 
 
-
-//----------------Sockets-------------------------------//
+// //----------------Sockets-------------------------------//
 
 // function initializeSocketIO(){
 //   var port = location.port ? location.port : '80';
@@ -189,107 +184,56 @@ function forfeitSilver(){
 // }
 
 
-
-
-
-
-
-
-
-
 //----------------------HUGE FUNCTIONS_____________________________//
 //_____________________________________1)Black Hole________________//
 
 function checkForTarPit(){
+  var side = ['silver', 'gold'];
+  for(var i = 0; i <= 1; i++){
+    if ($('tr:nth-child(3) > td:nth-child(3) > div').hasClass(side[i]) === true){
+      if($('tr:nth-child(2) > td:nth-child(3) > div').hasClass(side[i]) === false){
+        if($('tr:nth-child(3) > td:nth-child(4) > div').hasClass(side[i]) === false){
+          if($('tr:nth-child(4) > td:nth-child(3) > div').hasClass(side[i]) === false){
+            if($('tr:nth-child(3) > td:nth-child(2) > div').hasClass(side[i]) === false){
+              $('tr:nth-child(3) > td:nth-child(3) > div').remove();
+            }
+          }
+        }
+      }
+    }
+    if ($('tr:nth-child(3) > td:nth-child(6) > div').hasClass(side[i]) === true){
+      if($('tr:nth-child(2) > td:nth-child(6) > div').hasClass(side[i]) === false){
+        if($('tr:nth-child(3) > td:nth-child(7) > div').hasClass(side[i]) === false){
+          if($('tr:nth-child(4) > td:nth-child(6) > div').hasClass(side[i]) === false){
+            if($('tr:nth-child(3) > td:nth-child(5) > div').hasClass(side[i]) === false){
+              $('tr:nth-child(3) > td:nth-child(6) > div').remove();
+            }
+          }
+        }
+      }
+    }
+    if ($('tr:nth-child(6) > td:nth-child(6) > div').hasClass(side[i]) === true){
+      if($('tr:nth-child(5) > td:nth-child(6) > div').hasClass(side[i]) === false){
+        if($('tr:nth-child(6) > td:nth-child(7) > div').hasClass(side[i]) === false){
+          if($('tr:nth-child(7) > td:nth-child(6) > div').hasClass(side[i]) === false){
+            if($('tr:nth-child(6) > td:nth-child(5) > div').hasClass(side[i]) === false){
+              $('tr:nth-child(6) > td:nth-child(6) > div').remove();
+            }
+          }
+        }
+      }
+    }
+    if ($('tr:nth-child(6) > td:nth-child(3) > div').hasClass(side[i]) === true){
+      if($('tr:nth-child(5) > td:nth-child(3) > div').hasClass(side[i]) === false){
+        if($('tr:nth-child(6) > td:nth-child(4) > div').hasClass(side[i]) === false){
+          if($('tr:nth-child(7) > td:nth-child(3) > div').hasClass(side[i]) === false){
+            if($('tr:nth-child(6) > td:nth-child(2) > div').hasClass(side[i]) === false){
+              $('tr:nth-child(6) > td:nth-child(3) > div').remove();
+            }
+          }
+        }
+      }
+    }
 
-  if ($('tr:nth-child(3) > td:nth-child(3) > div').hasClass('gold') === true){
-    if($('tr:nth-child(2) > td:nth-child(3) > div').hasClass('gold') === false){
-      if($('tr:nth-child(3) > td:nth-child(4) > div').hasClass('gold') === false){
-        if($('tr:nth-child(4) > td:nth-child(3) > div').hasClass('gold') === false){
-          if($('tr:nth-child(3) > td:nth-child(2) > div').hasClass('gold') === false){
-            $('tr:nth-child(3) > td:nth-child(3) > div').remove();
-          }
-        }
-      }
-    }
-  }
-  if ($('tr:nth-child(3) > td:nth-child(6) > div').hasClass('gold') === true){
-    if($('tr:nth-child(2) > td:nth-child(6) > div').hasClass('gold') === false){
-      if($('tr:nth-child(3) > td:nth-child(7) > div').hasClass('gold') === false){
-        if($('tr:nth-child(4) > td:nth-child(6) > div').hasClass('gold') === false){
-          if($('tr:nth-child(3) > td:nth-child(5) > div').hasClass('gold') === false){
-            $('tr:nth-child(3) > td:nth-child(6) > div').remove();
-          }
-        }
-      }
-    }
-  }
-  if ($('tr:nth-child(6) > td:nth-child(6) > div').hasClass('gold') === true){
-    if($('tr:nth-child(5) > td:nth-child(6) > div').hasClass('gold') === false){
-      if($('tr:nth-child(6) > td:nth-child(7) > div').hasClass('gold') === false){
-        if($('tr:nth-child(7) > td:nth-child(6) > div').hasClass('gold') === false){
-          if($('tr:nth-child(6) > td:nth-child(5) > div').hasClass('gold') === false){
-            $('tr:nth-child(6) > td:nth-child(6) > div').remove();
-          }
-        }
-      }
-    }
-  }
-  if ($('tr:nth-child(6) > td:nth-child(3) > div').hasClass('gold') === true){
-    if($('tr:nth-child(5) > td:nth-child(3) > div').hasClass('gold') === false){
-      if($('tr:nth-child(6) > td:nth-child(4) > div').hasClass('gold') === false){
-        if($('tr:nth-child(7) > td:nth-child(3) > div').hasClass('gold') === false){
-          if($('tr:nth-child(6) > td:nth-child(2) > div').hasClass('gold') === false){
-            $('tr:nth-child(6) > td:nth-child(3) > div').remove();
-          }
-        }
-      }
-    }
-  }
-
-
-  if ($('tr:nth-child(3) > td:nth-child(3) > div').hasClass('silver') === true){
-    if($('tr:nth-child(2) > td:nth-child(3) > div').hasClass('silver') === false){
-      if($('tr:nth-child(3) > td:nth-child(4) > div').hasClass('silver') === false){
-        if($('tr:nth-child(4) > td:nth-child(3) > div').hasClass('silver') === false){
-          if($('tr:nth-child(3) > td:nth-child(2) > div').hasClass('silver') === false){
-            $('tr:nth-child(3) > td:nth-child(3) > div').remove();
-          }
-        }
-      }
-    }
-  }
-  if ($('tr:nth-child(3) > td:nth-child(6) > div').hasClass('silver') === true){
-    if($('tr:nth-child(2) > td:nth-child(6) > div').hasClass('silver') === false){
-      if($('tr:nth-child(3) > td:nth-child(7) > div').hasClass('silver') === false){
-        if($('tr:nth-child(4) > td:nth-child(6) > div').hasClass('silver') === false){
-          if($('tr:nth-child(3) > td:nth-child(5) > div').hasClass('silver') === false){
-            $('tr:nth-child(3) > td:nth-child(6) > div').remove();
-          }
-        }
-      }
-    }
-  }
-  if ($('tr:nth-child(6) > td:nth-child(6) > div').hasClass('silver') === true){
-    if($('tr:nth-child(5) > td:nth-child(6) > div').hasClass('silver') === false){
-      if($('tr:nth-child(6) > td:nth-child(7) > div').hasClass('silver') === false){
-        if($('tr:nth-child(7) > td:nth-child(6) > div').hasClass('silver') === false){
-          if($('tr:nth-child(6) > td:nth-child(5) > div').hasClass('silver') === false){
-            $('tr:nth-child(6) > td:nth-child(6) > div').remove();
-          }
-        }
-      }
-    }
-  }
-  if ($('tr:nth-child(6) > td:nth-child(3) > div').hasClass('silver') === true){
-    if($('tr:nth-child(5) > td:nth-child(3) > div').hasClass('silver') === false){
-      if($('tr:nth-child(6) > td:nth-child(4) > div').hasClass('silver') === false){
-        if($('tr:nth-child(7) > td:nth-child(3) > div').hasClass('silver') === false){
-          if($('tr:nth-child(6) > td:nth-child(2) > div').hasClass('silver') === false){
-            $('tr:nth-child(6) > td:nth-child(3) > div').remove();
-          }
-        }
-      }
-    }
-  }
-}
+  } //End of for loop.
+} //End of function
